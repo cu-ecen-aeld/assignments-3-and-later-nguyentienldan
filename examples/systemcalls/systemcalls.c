@@ -16,8 +16,12 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
+    int ret = system(cmd);
+    if (ret == 0) {
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 /**
@@ -58,10 +62,15 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
-
+    pid_t pid = fork();
+    if (pid == 0) {
+        int ret = execv(command[0], command);
+        exit(ret);
+    }
+    int status;
+    wait(&status);
     va_end(args);
-
-    return true;
+    return (WIFEXITED(status) && WEXITSTATUS(status) == 0);
 }
 
 /**
@@ -92,8 +101,22 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
-
+    pid_t pid = fork();
+    if (pid == 0) {
+        int fd = open(outputfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        if (fd == -1) {
+            exit(1);
+        }
+        if (dup2(fd, STDOUT_FILENO) == -1) {
+            close(fd);
+            exit(1);
+        }
+        close(fd);
+        int ret = execv(command[0], command);
+        exit(ret);
+    }
+    int status;
+    wait(&status);
     va_end(args);
-
-    return true;
+    return (WIFEXITED(status) && WEXITSTATUS(status) == 0);
 }
