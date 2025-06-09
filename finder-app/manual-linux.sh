@@ -82,8 +82,8 @@ ${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "program interpre
 ${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "Shared library"
 
 # TODO: Add library dependencies to rootfs
-cp -R ${FINDER_APP_DIR}/lib/* ${OUTDIR}/rootfs/lib
-cp -R ${FINDER_APP_DIR}/lib64/* ${OUTDIR}/rootfs/lib64
+cp -a ${FINDER_APP_DIR}/lib/* ${OUTDIR}/rootfs/lib
+cp -a ${FINDER_APP_DIR}/lib64/* ${OUTDIR}/rootfs/lib64
 
 # TODO: Make device nodes
 cd ${OUTDIR}/rootfs
