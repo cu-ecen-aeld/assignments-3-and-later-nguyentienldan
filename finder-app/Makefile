@@ -1,7 +1,11 @@
-CROSS_COMPILE =
+ifndef CROSS_COMPILE
+CC = gcc
+else
+CC = $(CROSS_COMPILE)gcc
+endif
 
 writer: writer.c
-	$(CROSS_COMPILE)gcc -Wall -o $@ $^
+	$(CC) -Wall -o $@ $^
 
 clean:
 	if test -f writer; then rm writer; fi
